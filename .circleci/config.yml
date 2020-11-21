@@ -3,6 +3,7 @@ orbs:
   node: circleci/node@1.1.6
 jobs:
   build-and-test:
+    working_directory: ~/repo
     executor:
       name: node/default
     steps:
@@ -11,6 +12,14 @@ jobs:
           steps:
             - run: npm install
             - run: npm test
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
 workflows:
   build-and-test:
     jobs:
